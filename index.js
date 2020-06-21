@@ -2,13 +2,13 @@
 var express = require("express");
 var app = express();
 const cors = require("cors");
-app.use(cors());
 app.use(express.bodyParser());
 var publicDir = require('path').join(__dirname,'/uploads');
 app.use(express.static(publicDir));
 app.use(express.static(__dirname + "/"));
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
+app.use(cors());
 http.listen(8080);
 console.log("PORT is 8080");
 var fs = require("fs");
