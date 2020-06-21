@@ -33,8 +33,8 @@ app.get("/", function (req, res) {
 });
 
 app.post("/upload", function (req, res) {
-  var imageType = /^image\/[a-z]+/;
-  if (imageType.test(req.files.file.type)) {
+  // var imageType = /^image\/[a-z]+/;
+  // if (imageType.test(req.files.file.type) || req.files.file.type==='pdf') {
     console.log(req.files);
     fs.readFile(req.files.file.path, function (err, data) {
       if (err) {
@@ -49,14 +49,14 @@ app.post("/upload", function (req, res) {
               console.log(err);
               res.send(500, "Error in upload");
             } else {
-              put(req.files.file.originalFilename, 60);
+              put(req.files.file.originalFilename, 6);
               res.send("File Uploaded");
             }
           }
         );
       }
     });
-  } else res.send(500, "Not an image");
+  // } else res.send(500, "Not an image");
 });
 
 var Sockets = [];
@@ -65,34 +65,36 @@ io.sockets.on("connection", function (socket) {
 });
 
 //*********************LISTENER***********************//
-var async = require("async");
-function cacheListener() {
-  if (Object.keys(cache).length != 0) {
-    async.each(
-      Object.keys(cache),
-      function (item, iterate) {
-        if (cache[item].expire < Date.now()) del(item);
-        else iterate();
-      },
-      function (err) {
-        // console.log(err);
-      }
-    );
-    setTimeout(function () {
-      for (var i = Sockets.length - 1; i >= 0; i--) {
-        Sockets[i].send(cache);
-      }
-      cacheListener();
-      console.log("listener working");
-    }, 1000);
-  } else {
-    setTimeout(function () {
-      for (var i = Sockets.length - 1; i >= 0; i--) {
-        Sockets[i].send(cache);
-      }
-      cacheListener();
-      // console.log('listener working');
-    }, 1000);
-  }
+
+var Sockets=[];
+io.sockets.on('connection',function (socket){
+    Sockets.push(socket);
+});
+// //*********************LISTENER***********************//
+var async = require('async');
+function cacheListener(){
+if(Object.keys(cache).length!=0){	
+    async.each(Object.keys(cache),function(item,iterate){
+    	if(cache[item].expire<Date.now())
+    		del(item);
+    	else
+    		iterate();
+    },function(err){console.log(err);});
+    setTimeout(function(){
+        for (var i = Sockets.length - 1; i >= 0; i--) {
+            Sockets[i].send(cache);
+        };
+            cacheListener();
+            //console.log('listener working');
+        },1000);
+}else{
+    setTimeout(function(){
+        for (var i = Sockets.length - 1; i >= 0; i--) {
+            Sockets[i].send(cache);
+        };
+            cacheListener();
+            //console.log('listener working');
+        },1000);
+}
 }
 cacheListener();
