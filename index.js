@@ -2,18 +2,11 @@
 var express = require("express");
 var app = express();
 app.use(express.bodyParser());
-const cors = require("cors");
-app.use(cors());
 var publicDir = require('path').join(__dirname,'/uploads');
 app.use(express.static(publicDir));
 app.use(express.static(__dirname + "/"));
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
 http.listen(8080);
 console.log("PORT is 8080");
 var fs = require("fs");
