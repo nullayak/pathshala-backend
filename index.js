@@ -2,13 +2,13 @@
 var express = require("express");
 var app = express();
 const cors = require("cors");
+app.use(cors());
 app.use(express.bodyParser());
 var publicDir = require('path').join(__dirname,'/uploads');
 app.use(express.static(publicDir));
 app.use(express.static(__dirname + "/"));
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
-app.use(cors());
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
