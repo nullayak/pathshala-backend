@@ -1,9 +1,9 @@
 //******************SERVER SETUP*********************//
 var express = require("express");
 var app = express();
+app.use(express.bodyParser());
 const cors = require("cors");
 app.use(cors());
-app.use(express.bodyParser());
 var publicDir = require('path').join(__dirname,'/uploads');
 app.use(express.static(publicDir));
 app.use(express.static(__dirname + "/"));
