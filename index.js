@@ -1,9 +1,13 @@
-//******************SERVER SETUP*********************//
-var express = require("express");
-var app = express();
-app.use(express.bodyParser());
+const express = require('express')
+const bodyParser = require('body-parser');
+const cors = require('./cors');
+const multer=require('multer')
+const app=express()
+const upload=multer()
+
+app.use(bodyParser.json())
+app.use(cors.corsWithOptions)
 var publicDir = require('path').join(__dirname,'/uploads');
-app.use(express.static(publicDir));
 app.use(express.static(__dirname + "/"));
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
@@ -11,7 +15,7 @@ http.listen(8080);
 console.log("PORT is 8080");
 var fs = require("fs");
 
-//*********************CACHE*************************//
+// //*********************CACHE*************************//
 
 var cache = {};
 var put = function (key, value, expire) {
@@ -30,31 +34,30 @@ app.get("/", function (req, res) {
   res.sendfile("/index.html");
 });
 
-app.post("/upload", function (req, res) {
-  // var imageType = /^image\/[a-z]+/;
-  // if (imageType.test(req.files.file.type) || req.files.file.type==='pdf') {
-    console.log(req.files);
-    fs.readFile(req.files.file.path, function (err, data) {
+app.post("/upload",upload.single('file'), function (req, res) {
+    console.log(req.file)
+    console.log(req.body);
+    console.log("_________________________________")
+    fs.readFile(req.file.path, function (err, data) {
       if (err) {
         console.log("Cannot readFile");
         res.send(500, "file Cannot be found");
       } else {
         fs.writeFile(
-          __dirname + "/uploads/" + req.files.file.originalFilename,
+          __dirname + "/uploads/" + req.file.originalName,
           data,
           function (err, result) {
             if (err) {
               console.log(err);
               res.send(500, "Error in upload");
             } else {
-              put(req.files.file.originalFilename, 6);
+              put(req.file.originalName, 6);
               res.send("File Uploaded");
             }
           }
         );
       }
     });
-  // } else res.send(500, "Not an image");
 });
 
 var Sockets = [];
@@ -62,7 +65,6 @@ io.sockets.on("connection", function (socket) {
   Sockets.push(socket);
 });
 
-//*********************LISTENER***********************//
 
 var Sockets=[];
 io.sockets.on('connection',function (socket){

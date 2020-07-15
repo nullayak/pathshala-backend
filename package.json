@@ -12,7 +12,8 @@
   "dependencies": {
     "async": "^3.2.0",
     "cors": "^2.8.5",
-    "express": "^3.4.7",
+    "express": "^3.21.2",
+    "multer": "^2.0.0-rc.1",
     "socket.io": "^2.3.0"
   }
 }
