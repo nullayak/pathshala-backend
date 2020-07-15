@@ -37,7 +37,7 @@ var del = function (key) {
 //********************ROUTES**************************//
 
 app.get("/", function (req, res) {
-  res.sendfile("/index.html");
+  res.send('<p>Hello</p>')
 });
 
 app.post("/upload",upload.single('file'), function (req, res) {
